@@ -1,6 +1,9 @@
 # Low-complexity Tracking of the Myocardium in 2D Echocardiography
 
-**Article: **
+5/1/25 Update: Overhauled and simplified the repo to remove unobtainable dependencies.   
+Should be (more) usable now?
+
+**Pre-print: [https://arxiv.org/abs/2503.10431v1](https://arxiv.org/abs/2503.10431v1)**
 
 This is the code repository for the MyoTracker architecture described in the article. MyoTracker is a drastically simplified version of Meta AI's CoTracker/CoTracker2 architecture proposed by Karaev et al. (https://co-tracker.github.io/), with the size reduced from 24M/45M parameters to under 0.32M through removal of various components. The reduced size is still sufficient for working with 2D echocardiography data, yet it offers greater speed and lower compute requirements. It seems unlikely to work for broader tasks, but I haven't really tried.
 
