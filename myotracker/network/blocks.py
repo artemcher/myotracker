@@ -1,63 +1,42 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from functools import partial
-from typing import Callable
-import collections
 from torch import Tensor
-from itertools import repeat
 
-from myotracker.model.model_utils import bilinear_sampler
-
+from myotracker.network.model_utils import bilinear_sampler
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_planes, planes, norm_fn="instance", stride=1):
+    def __init__(self, in_channels, channels, stride=1):
         super(ConvBlock, self).__init__()
 
-        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, padding=1, stride=stride)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, padding=1)
+        self.conv1 = nn.Conv2d(in_channels, channels, kernel_size=3, padding=1, stride=stride)
+        self.norm1 = nn.InstanceNorm2d(channels)
+        
+        self.conv2 = nn.Conv2d(channels, channels, kernel_size=3, padding=1)
+        self.norm2 = nn.InstanceNorm2d(channels)
         self.relu = nn.ReLU()
-
-        if norm_fn == "batch":
-            self.norm1 = nn.BatchNorm2d(planes)
-            self.norm2 = nn.BatchNorm2d(planes)
-
-        elif norm_fn == "instance":
-            self.norm1 = nn.InstanceNorm2d(planes)
-            self.norm2 = nn.InstanceNorm2d(planes)
-
-        elif norm_fn == "none":
-            self.norm1 = nn.Sequential()
-            self.norm2 = nn.Sequential()
 
     def forward(self, x):
         x = self.relu(self.norm1(self.conv1(x)))
         x = self.relu(self.norm2(self.conv2(x)))
         return x
 
-class BasicEncoder(nn.Module):
+class ConvEncoder(nn.Module):
     def __init__(self, input_dim=1, output_dim=64, stride=4):
-        super(BasicEncoder, self).__init__()
+        super(ConvEncoder, self).__init__()
         self.stride = stride
-        self.norm_fn = "instance"
-        self.in_planes = 16
+        self.in_channels = 16
 
-        self.norm1 = nn.InstanceNorm2d(self.in_planes)
+        self.norm1 = nn.InstanceNorm2d(self.in_channels)
         self.norm2 = nn.InstanceNorm2d(output_dim)
 
-        self.conv1 = nn.Conv2d(input_dim, self.in_planes, kernel_size=7, stride=2, padding=3)
+        self.conv1 = nn.Conv2d(input_dim, self.in_channels, kernel_size=7, stride=2, padding=3)
         self.relu1 = nn.ReLU()
         
-        self.layer1 = ConvBlock(self.in_planes, 16, norm_fn="instance", stride=1)
-        self.layer2 = ConvBlock(16, 16, norm_fn="instance", stride=2)
-        self.layer3 = ConvBlock(16, 32, norm_fn="instance", stride=2)
-        self.layer4 = ConvBlock(32, 32, norm_fn="instance", stride=2)
+        self.layer1 = ConvBlock(self.in_channels, 16, stride=1)
+        self.layer2 = ConvBlock(16, 16, stride=2)
+        self.layer3 = ConvBlock(16, 32, stride=2)
+        self.layer4 = ConvBlock(32, 32, stride=2)
 
         self.conv2 = nn.Conv2d(96, output_dim, kernel_size=3, padding=1)
         self.relu2 = nn.ReLU()
@@ -88,12 +67,7 @@ class BasicEncoder(nn.Module):
 
 
 class CorrBlock:
-    def __init__(
-        self,
-        fmaps: torch.Tensor,
-        num_levels: int = 4,
-        radius: int = 4,
-    ):
+    def __init__(self, fmaps: torch.Tensor, num_levels: int = 4, radius: int = 4):
         B, S, C, H, W = fmaps.shape
         
         self.S, self.C, self.H, self.W = S, C, H, W
@@ -160,7 +134,7 @@ class CorrBlock:
 
 
 class MLP(nn.Module):
-    """MLP as used in Vision Transformer, MLP-Mixer and related networks"""
+    """Simple Multi-Layer Perceptron (or Feed-Forward Network)"""
 
     def __init__(self, in_features, out_features):
         super().__init__()

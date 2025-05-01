@@ -1,12 +1,12 @@
 # Low-complexity Tracking of the Myocardium in 2D Echocardiography
 
-Article (pre-print): [https://arxiv.org/abs/2503.10431](https://arxiv.org/abs/2503.10431)
+**Article: **
 
-This is the code repository for the MyoTracker architecture described in the article. MyoTracker is a drastically simplified version of Meta AI's CoTracker/CoTracker2 architecture proposed by Karaev et al. (https://co-tracker.github.io/), with the size reduced from 24M/45M parameters to under 0.32M through removal of various components. The reduced size is still sufficient for working with 2D echocardiography data, yet it offers greater speed and lower compute requirements.
+This is the code repository for the MyoTracker architecture described in the article. MyoTracker is a drastically simplified version of Meta AI's CoTracker/CoTracker2 architecture proposed by Karaev et al. (https://co-tracker.github.io/), with the size reduced from 24M/45M parameters to under 0.32M through removal of various components. The reduced size is still sufficient for working with 2D echocardiography data, yet it offers greater speed and lower compute requirements. It seems unlikely to work for broader tasks, but I haven't really tried.
 
 ## Architecture
 
-MyoTracker architecture (as defined in ```myotracker/model/```):
+MyoTracker architecture (as defined in ```myotracker/network/myotracker.py```):
 
 ![myotracker_diagram.jpg](https://github.com/artemcher/myotracker/blob/main/assets/myotracker_diagram.jpg)
 
@@ -21,11 +21,11 @@ Visual examples with a MyoTracker model trained to track the right ventricular m
 
 ## License
 
-MyoTracker propagates CoTracker's license (CC-BY-NC 4.0).
+MyoTracker propagates the CoTracker's license (CC-BY-NC 4.0).
 
 ## Citing
 
-If you use the code in further work, it would be best to cite the original publication on CoTracker as well:
+If you use the code in further work, please cite the original publication on CoTracker:
 
 ```bibtex
 @article{karaev2023cotracker,

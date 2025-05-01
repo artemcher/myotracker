@@ -10,7 +10,6 @@ from typing import Optional, Tuple
 
 EPS = 1e-6
 
-
 def smart_cat(tensor1, tensor2, dim):
     if tensor1 is None:
         return tensor2
@@ -74,55 +73,6 @@ def get_points_on_a_grid(
         indexing="ij",
     )
     return torch.stack([grid_x, grid_y], dim=-1).reshape(1, -1, 2)
-
-
-def reduce_masked_mean(inputs, mask, dim=None, keepdim=False):
-    r"""Masked mean
-
-    `reduce_masked_mean(x, mask)` computes the mean of a tensor :attr:`input`
-    over a mask :attr:`mask`, returning
-
-    .. math::
-        \text{output} =
-        \frac
-        {\sum_{i=1}^N \text{input}_i \cdot \text{mask}_i}
-        {\epsilon + \sum_{i=1}^N \text{mask}_i}
-
-    where :math:`N` is the number of elements in :attr:`input` and
-    :attr:`mask`, and :math:`\epsilon` is a small constant to avoid
-    division by zero.
-
-    `reduced_masked_mean(x, mask, dim)` computes the mean of a tensor
-    :attr:`input` over a mask :attr:`mask` along a dimension :attr:`dim`.
-    Optionally, the dimension can be kept in the output by setting
-    :attr:`keepdim` to `True`. Tensor :attr:`mask` must be broadcastable to
-    the same dimension as :attr:`input`.
-
-    The interface is similar to `torch.mean()`.
-
-    Args:
-        inout (Tensor): input tensor.
-        mask (Tensor): mask.
-        dim (int, optional): Dimension to sum over. Defaults to None.
-        keepdim (bool, optional): Keep the summed dimension. Defaults to False.
-
-    Returns:
-        Tensor: mean tensor.
-    """
-
-    mask = mask.expand_as(inputs)
-
-    prod = input * mask
-
-    if dim is None:
-        numer = torch.sum(prod)
-        denom = torch.sum(mask)
-    else:
-        numer = torch.sum(prod, dim=dim, keepdim=keepdim)
-        denom = torch.sum(mask, dim=dim, keepdim=keepdim)
-
-    mean = numer / (EPS + denom)
-    return mean
 
 
 def bilinear_sampler(inputs, coords):
