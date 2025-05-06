@@ -8,9 +8,7 @@ from typing import Tuple, Union
 import torch
 
 
-def get_2d_sincos_pos_embed(
-    embed_dim: int, grid_size: Union[int, Tuple[int, int]]
-) -> torch.Tensor:
+def get_2d_sincos_pos_embed(embed_dim: int, grid_size: Union[int, Tuple[int, int]]):
     """
     This function initializes a grid and generates a 2D positional embedding using sine and cosine functions.
     It is a wrapper of get_2d_sincos_pos_embed_from_grid.
@@ -56,9 +54,7 @@ def get_2d_sincos_pos_embed_from_grid(
     return emb
 
 
-def get_1d_sincos_pos_embed_from_grid(
-    embed_dim: int, pos: torch.Tensor
-) -> torch.Tensor:
+def get_1d_sincos_pos_embed_from_grid(embed_dim, pos):
     """
     This function generates a 1D positional embedding from a given grid using sine and cosine functions.
 
@@ -85,7 +81,7 @@ def get_1d_sincos_pos_embed_from_grid(
     return emb[None].float()
 
 
-def get_2d_embedding(xy: torch.Tensor, C: int, cat_coords: bool = True) -> torch.Tensor:
+def get_2d_embedding(xy, C: int, cat_coords: bool = True):
     """
     This function generates a 2D positional embedding from given coordinates using sine and cosine functions.
 

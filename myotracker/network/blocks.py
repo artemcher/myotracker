@@ -67,7 +67,7 @@ class ConvEncoder(nn.Module):
 
 
 class CorrBlock:
-    def __init__(self, fmaps: torch.Tensor, num_levels: int = 4, radius: int = 4):
+    def __init__(self, fmaps, num_levels: int = 4, radius: int = 4):
         B, S, C, H, W = fmaps.shape
         
         self.S, self.C, self.H, self.W = S, C, H, W

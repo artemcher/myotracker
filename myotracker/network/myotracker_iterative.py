@@ -40,7 +40,7 @@ class MyoTrackerIter(nn.Module):
         sample_track_feats = sample_features4d(feature_maps[:,0], queried_coords)
         return torch.unsqueeze(sample_track_feats, 1)
 
-    def forward(self, frames: torch.Tensor, queries: torch.Tensor):
+    def forward(self, frames, queries):
         B, T, C, H, W = frames.shape
         B, N, __ = queries.shape # [B, N, 2], (y,x) - order
         device = queries.device

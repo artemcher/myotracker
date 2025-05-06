@@ -60,7 +60,7 @@ class SaveExample:
             frame = np_frames[i].copy()
             for p in range(np_tracks.shape[1]):
                 pt = (np_tracks[i, p, 1], np_tracks[i, p, 0])  # (x, y)
-                #cv2.circle(frame, pt, radius=2, color=(0,255,0), thickness=-1)
+                cv2.circle(frame, pt, radius=2, color=(0,255,0), thickness=-1)
             overlays.append(frame)
         overlays = np.array(overlays, dtype=np.uint8)
 

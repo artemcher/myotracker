@@ -18,7 +18,7 @@ from myotracker.network.myotracker import MyoTracker
 from myotracker.network.myotracker_iterative import MyoTrackerIter
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 # lightning module
 class MyoTrackerModule(pl.LightningModule):
@@ -123,7 +123,7 @@ def train_myotracker(data_root, dataset_class, model_class, train_config=None, t
 
 if __name__ == "__main__":
     # -------------------------------------- Options ------------------------------------- #
-    hunt4rv_path = "../../rv-tracking/data/prepared_data_small"
+    hunt4rv_path = "../../rv-tracking/data/prepared_data"
     
     # available (make your own dataset)
     data_paths      = [hunt4rv_path]
@@ -142,21 +142,21 @@ if __name__ == "__main__":
         'tracks_shape': (64, 64, 2), # [T, N, 2]
         'start_learning_rate': 0.001,
         'lr_decay_step': 0.99992, # RE-CALCULATE FOR YOUR DATA
-        'epochs': 5,#00,
+        'epochs': 500,
         'early_stop_patience': 100
     }
 
     transform = v2.Compose([
         v2.RandomApply([ApplyToKey(BlockErase(max_blocks=10), key="frames")], p=0.5),
         v2.RandomApply([ApplyToKey(BlockSwap(max_blocks=10), key="frames")], p=0.5),
-        v2.RandomApply([ApplyToKey(RandomBlackout(max_ratio=0.25), key="frames")], p=0.5),
+        v2.RandomApply([ApplyToKey(RandomBlackout(max_ratio=0.2), key="frames")], p=0.5),
         
         v2.RandomApply([ApplyToKey(TemporalReverse(), key="all")], p=0.5),
         v2.RandomApply([ApplyToKey(Rotation(max_angle=30), key="all")], p=0.5),
-        v2.RandomApply([ApplyToKey(Zoom(height=(0.4, 1.33), width=(0.4, 1.33)), key="all")], p=0.5),
+        v2.RandomApply([ApplyToKey(Zoom(height=(0.75, 1.25), width=(0.4, 1.33)), key="all")], p=0.5),
         v2.RandomApply([ApplyToKey(Translation(height=0.25, width=0.25), key="all")], p=0.5),
 
-        v2.RandomApply([ApplyToKey(v2.JPEG(quality=(40,75)), key="frames")], p=0.5),
+        v2.RandomApply([ApplyToKey(v2.JPEG(quality=(50,80)), key="frames")], p=0.5),
         v2.RandomApply([ApplyToKey(v2.ColorJitter(0.3,0.3,0.3), key="frames")], p=0.5),
         v2.RandomApply([ApplyToKey(v2.GaussianBlur(3, sigma=(0.1,2.0)), key="frames")], p=0.5),
 
